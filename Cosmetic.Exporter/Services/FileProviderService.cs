@@ -15,6 +15,7 @@ namespace Cosmetic.Exporter.Services
 {
     public interface IFileProviderService
     {
+        public Task Init();
     }
 
     public class FileProviderService : IFileProviderService
@@ -23,7 +24,11 @@ namespace Cosmetic.Exporter.Services
 
         public FileProviderService() 
         {
-            
+            if (!Directory.Exists(Constants.DataPath))
+                Directory.CreateDirectory(Constants.DataPath);
+
+            if (!Directory.Exists(Constants.ExportPath))
+                Directory.CreateDirectory(Constants.ExportPath);
         }
 
         public async Task Init()
