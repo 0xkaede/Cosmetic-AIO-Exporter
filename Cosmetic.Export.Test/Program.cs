@@ -13,6 +13,8 @@ namespace Cosmetic.Export.Test
             var skunk = new FileProviderService();
 
             await skunk.Init();
+
+            await skunk.ExportCosmetic("EID_Apollo", Exporter.Enums.ItemType.Emote);
         }
     }
 }

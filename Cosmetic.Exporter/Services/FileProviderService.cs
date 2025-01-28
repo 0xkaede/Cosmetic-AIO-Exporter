@@ -25,6 +25,7 @@ using Serilog.Core;
 using SkiaSharp;
 using System.Diagnostics;
 using System.Net;
+using System.Security.Cryptography;
 using Logger = Cosmetic.Exporter.Utils.Logger;
 
 namespace Cosmetic.Exporter.Services
@@ -123,8 +124,9 @@ namespace Cosmetic.Exporter.Services
         public async Task ExportCosmetic(string Id, ItemType type)
         {
             _currentId = Id;
-
             UObject cosmeticObject = null;
+
+            cosmeticObject = await Provider.LoadObjectAsync($"FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics/Dances/{Id}");
 
             if (cosmeticObject is null)
             {
@@ -146,7 +148,7 @@ namespace Cosmetic.Exporter.Services
                 case ItemType.Emote:
                     {
                         _exportData.Emote = new EmoteData();
-
+                        await ExportEmote(cosmeticObject);
 
                         break;
                     }
@@ -257,7 +259,7 @@ namespace Cosmetic.Exporter.Services
                     if (bodyMotion != null)
                     {
                         var animReferenceMot = await bodyMotion.AnimTrack.AnimSegments[0].AnimReference.LoadAsync();
-                        var animSequence = await Provider.LoadObjectAsync<UAnimSequence>(animReferenceMot.GetPathName());
+                        var animSequence = await Provider.LoadObjectAsync<UAnimSequence>(animReferenceMot!.GetPathName());
                         await ExportAnimation(animSequence);
                     }
                 }
