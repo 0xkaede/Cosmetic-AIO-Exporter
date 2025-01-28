@@ -201,6 +201,21 @@ namespace Cosmetic.Exporter.Services
             Logger.Log("Exporting Audio", LogLevel.Cue4);
             await ExportAudio(CMM_Montage);
 
+            if(CMM_Montage != null)
+            {
+                if(CMM_Montage.TryGetValue(out FStructFallback blendIn, "BlendIn"))
+                {
+                    if (blendIn.TryGetValue(out float fBlendIn, "BlendTime"))
+                        _exportData.Emote.Blend.Add("BlendIn", fBlendIn);
+                }
+
+                if (CMM_Montage.TryGetValue(out FStructFallback blendOut, "BlendOut"))
+                {
+                    if (blendIn.TryGetValue(out float fBlendOut, "BlendTime"))
+                        _exportData.Emote.Blend.Add("BlendOut", fBlendOut);
+                }
+            }
+
             await JsonDataSave(JsonConvert.SerializeObject(CMM_Montage, Formatting.Indented));
             //await GetLastData(); redo
             await JsonEmoteDataSave();

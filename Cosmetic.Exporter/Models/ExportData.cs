@@ -28,7 +28,7 @@ namespace Cosmetic.Exporter.Models
     public class EmoteData
     {
         [JsonProperty("blend")]
-        public Dictionary<string, double> Blend { get; set; } = new Dictionary<string, double>();
+        public Dictionary<string, float> Blend { get; set; } = new Dictionary<string, float>();
 
         [JsonProperty("floatCurves")]
         public List<string> FloatCurves { get; set; } = new List<string>();
