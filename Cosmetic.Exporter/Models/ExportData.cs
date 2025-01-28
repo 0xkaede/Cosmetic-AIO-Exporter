@@ -31,7 +31,7 @@ namespace Cosmetic.Exporter.Models
         public Dictionary<string, float> Blend { get; set; } = new Dictionary<string, float>();
 
         [JsonProperty("floatCurves")]
-        public List<string> FloatCurves { get; set; } = new List<string>();
+        public Dictionary<string, List<string>> FloatCurves { get; set; } = new Dictionary<string, List<string>>();
 
         [JsonProperty("isAddictive")]
         public bool IsAddictive { get; set; }

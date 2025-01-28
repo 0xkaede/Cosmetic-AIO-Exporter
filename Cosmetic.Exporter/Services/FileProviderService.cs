@@ -13,6 +13,7 @@ using CUE4Parse.UE4.Assets.Exports.Rig;
 using CUE4Parse.UE4.Assets.Exports.Sound.Node;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Objects;
+using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Objects.Core.i18N;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Versions;
@@ -217,7 +218,8 @@ namespace Cosmetic.Exporter.Services
             }
 
             await JsonDataSave(JsonConvert.SerializeObject(CMM_Montage, Formatting.Indented));
-            //await GetLastData(); redo
+            _exportData.Emote.FloatCurves.Add("Male", GetFloatCurves(CMM_Montage));
+            _exportData.Emote.FloatCurves.Add("Female", GetFloatCurves(CMF_Montage));
             await JsonEmoteDataSave();
         }
 
@@ -371,7 +373,7 @@ namespace Cosmetic.Exporter.Services
                 Logger.Log("Error Getting FAnimNotifyEvent", LogLevel.Error);
         }
 
-        private static async Task FixSound(string path)
+        private async Task FixSound(string path)
         {
             if (!File.Exists(Constants.BlinkaExe))
             {
@@ -394,7 +396,29 @@ namespace Cosmetic.Exporter.Services
             binkadecProcess?.WaitForExit(5000);
         }
 
-        private static async Task<USoundNodeRandom> TryGetSoundRandom(UEmoteMusic uEmoteMusic)
+        private List<string> GetFloatCurves(UObject uObject)
+        {
+            var ret = new List<string>();
+
+            if (!uObject.TryGetValue(out FStructFallback rawCurveData, "RawCurveData"))
+            {
+                Logger.Log("Couldnt export RawCurveData", LogLevel.Error);
+                return null;
+            }
+
+            if(!rawCurveData.TryGetValue(out FFloatCurve[] floatCurves, "FloatCurves"))
+            {
+                Logger.Log("Couldnt export floatCurves", LogLevel.Error);
+                return null;
+            }
+
+            foreach(var curve in floatCurves)
+                ret.Add(curve.CurveName.Text ?? "");
+
+            return ret;
+        }
+
+        private async Task<USoundNodeRandom> TryGetSoundRandom(UEmoteMusic uEmoteMusic)
         {
             try
             {
